@@ -61,7 +61,7 @@ $\lim_{x \rightarrow 2^{-}} f(x) = 1.0$
 
 $\lim_{x \rightarrow 2^{+}} f(x) = 2.0$
 
-We use a $-$ sign to indicate an approach from the left and a $+$ sign to denote an approach from the right. You can see that we have a bit of a problem here: the two limits (approaching from the left and again from the right) are not equal. This means that $\lim_{x \rightarrow 2} f(x)$ doesn't exist! **The limit must be the same when approaching from the left and from the right in order for it to be an actual limit.**
+We use a - sign to indicate an approach from the left and a + sign to denote an approach from the right. You can see that we have a bit of a problem here: the two limits (approaching from the left and again from the right) are not equal. This means that $\lim_{x \rightarrow 2} f(x)$ doesn't exist! **The limit must be the same when approaching from the left and from the right in order for it to be an actual limit.**
 
 Finally, let's determine the value of $f(2)$. We can see graphically that $f(2) = 2.0$. So,
 
@@ -296,7 +296,7 @@ To recap, $F'(x) = f(x)$ and $\int_a^b \! f(x) \, \mathrm{d}x = F(b) - F(a)$, wh
 
 # ╔═╡ Cell order:
 # ╟─00becd22-19ed-11eb-1be5-a1380e1f3e51
-# ╟─c2ad8940-1a0a-11eb-38de-7d2feb4c0fba
+# ╠═c2ad8940-1a0a-11eb-38de-7d2feb4c0fba
 # ╟─41505bfe-1a0b-11eb-2f7c-592c4b5aa816
 # ╟─f737c88e-1a0c-11eb-1b2e-95d746db7001
 # ╟─3c3f4040-1a0c-11eb-24d6-47e1ede493be
