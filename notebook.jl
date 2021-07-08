@@ -20,8 +20,29 @@ begin
 	using LaTeXStrings
 	using Plots
 	using PlutoUI
+	using QuadGK
 	plotly()
 end;
+
+# ╔═╡ 87936340-5ced-11eb-3a42-932fd83fe115
+begin
+	using ForwardDiff
+	g(x) = x[1] + exp(x[2]-x[1])
+	z = [1,2]
+	g_hat(x) = g(z) + ForwardDiff.gradient(g,z)' * (x - z)
+	xrange = range(-0.5,2;length=20)
+	yrange = range(-1,4;length=20)
+	vals = [[x[1],x[2]] for x in zip(xrange,yrange)]
+	plot(g.(vals), label="f(x)")
+	plot!(
+		g_hat.(vals),
+		label="f_hat(x)",
+		legend=:topleft,
+		xticks=(1:length(vals), [[round(x[1], digits=2), round(x[2], digits=2)] for x in vals]),
+		xrotation=45
+	)
+	scatter!([12.4], [g_hat([1,2])], label="x = [1,2]")
+end
 
 # ╔═╡ 00becd22-19ed-11eb-1be5-a1380e1f3e51
 md"""
@@ -43,7 +64,8 @@ plot(
 	marker=:dot,
 	title="Discontinous Function #1",
 	xlabel="x",
-	ylabel="y"
+	ylabel="y",
+	ylims=(0,4)
 )
 
 # ╔═╡ f737c88e-1a0c-11eb-1b2e-95d746db7001
@@ -54,7 +76,7 @@ Ask yourself the following question: **what is the value of this function as $x$
 
 The answer to the above question is **1.0**. What if we asked the question but approach **2.0** from the right-hand side? The answer in that case is that the value of $y$ equals **2.0** as we approach an $x$ value of **2.0** from the right.
 
-Let's write the above two statements in mathematical notation:
+Let's write the above two statements using mathematical notation:
 
 $\lim_{x \rightarrow 2^{-}} f(x) = 1.0$
 
@@ -293,6 +315,63 @@ $\int_0^2 \! f(x) \, \mathrm{d}x = F(2) - F(0) = \frac{4}{3}$
 To recap, $F'(x) = f(x)$ and $\int_a^b \! f(x) \, \mathrm{d}x = F(b) - F(a)$, which actually represents **the fundamental theorem of calculus.** It shows that the process of integration is the inverse of differentiation: the derivative of $F(x)$ equals the integrand $f(x)$ and taking the difference of our anti-derivative $F$ evaluated at $a$ and $b$ yields the integral $\int_a^b \! f(x) \, \mathrm{d}x$. What's incredible about this is that we can compute the entire area under a curve by simply evaluating an antiderivative at the beginning and ending points of the interval (rather than summing the areas of an infinitesimal number of rectangles 😄).
 """
 
+# ╔═╡ 4b368110-d818-11eb-1ec0-0bb9fc8f83ed
+md"""
+Let's see an illustration of this. First, let's see how the area under the curve changes as we increase the value of $b$ in $\int_a^b \! f(x) \, \mathrm{d}x$
+
+$(@bind b Slider(0.5:0.1:2.0, show_value=true))
+"""
+
+# ╔═╡ bdf17ee0-d817-11eb-1699-43f0bf480dff
+begin
+	plot(-2:0.1:2, x -> sin(x), legend=false, framestyle=:origin, xlabel="x", ylabel="y",xlims=(-2,2),ylims=(-1,1.5))
+	plot!(0:0.1:b, x -> sin(x), lw=0, fill=(0, 0.25, :green))
+	plot!(0.0:0.1:b, [quadgk(x -> sin(x), 0, x, rtol=1e-8)[1] for x in 0.0:0.1:b], legend=false, color=:orange,line=:dash)
+	# plot!(0.0:0.1:2, x -> -cos(x) + 1, legend=false)
+end
+
+# ╔═╡ 92bd3420-d818-11eb-1a9e-a939fbba5f12
+md"""
+Obviously, as we integrate over a larger interval, we see that the shaded region becomes larger and its area becomes larger. An interesting question to ask is: what is the rate of change of the increase in the area of this shaded region? In other words, what's the derivative of the function that produces the orange-dashed line? 
+
+To answer that, let's first look at what function produces the area of the green-shaded region, for each value of $x$. We've already stated above that it's the anti-derivative of $f$. In this example, $f(x) = \sin(x)$ and one of its anti-derivatives is $F(x) = -\cos(x) + 1$. Below we'll plot $f$,$F$, a line tangent to $F$ at some $x$ value (that you control with the slider), as well as a purple dot that corresponds to the slope of the tangent line:
+"""
+
+# ╔═╡ 77e0d7c0-d81c-11eb-0f5e-434e71546acc
+@bind xpoint2 Slider(0:0.1:2.0, show_value=true)
+
+# ╔═╡ 049ae9ee-d81b-11eb-2325-bf2dced8d369
+begin
+	plot(-2:0.1:2, x -> sin(x), label="f", framestyle=:origin, xlabel="x", ylabel="y",xlims=(-2,2),ylims=(-1,1.5))
+	plot!(0.0:0.1:2, x -> -cos(x) + 1, label="F", legend=:topleft)
+	plot!(
+		-2:0.1:2,
+		 x -> sin(xpoint2)*x + (-sin(xpoint2)*xpoint2 + (-cos(xpoint2) + 1)),
+		label="tangent"
+	)
+	scatter!([xpoint2],[sin(xpoint2)],label="slope of tangent")
+end
+
+# ╔═╡ 2f64dd50-d81e-11eb-2b5e-c3bcd8e4e6c5
+md"""
+What do you notice about this? The slope of the tangent line touching $F$ at any value of $x$ is equal to the value of $f$ evaluated at that same $x$. This shouldn't come as a surprise as we know that the slope of $F$ is its derivative and that the derivative of $F$ is simply $f$! That's why $F$ is called the anti-derivative of $f$. 
+"""
+
+# ╔═╡ 617f767e-5ced-11eb-3177-f52621f68710
+md"""
+#### Taylor Approximations
+
+Now that we know a bit about derivatives, let's look at an interesting use-case. Taylor approximations allow us to *approximate* a function as a linear or affine function. Take the function $f: R^2 \rightarrow R$ given by $f(x) = x_{1} + exp(x_{2} - x_{1})$ for example. We can approximate $f$ as:
+
+$\hat{f}(x) = f(z) + \nabla f(z)^{T}(x - z)$
+
+In the above, $\nabla f(z)$ is the *gradient* of $f(z)$, which is nothing more than the vector that contains each of the partial derivatives of $f(z)$.
+
+$\nabla f(z) = [1 - exp(x_{2} - x_{1}), \ exp(x_{2} - x_{1})]$
+
+For any $x$ near $z$, $\hat{f}$ is very close to $f(x)$.
+"""
+
 # ╔═╡ Cell order:
 # ╟─00becd22-19ed-11eb-1be5-a1380e1f3e51
 # ╠═c2ad8940-1a0a-11eb-38de-7d2feb4c0fba
@@ -321,3 +400,11 @@ To recap, $F'(x) = f(x)$ and $\int_a^b \! f(x) \, \mathrm{d}x = F(b) - F(a)$, wh
 # ╟─648e6200-1d64-11eb-009c-fb526f61ad14
 # ╟─b76a1810-1de2-11eb-2edc-2d9b7de9c01e
 # ╟─141ef252-1de9-11eb-376c-41d3acca56d4
+# ╟─4b368110-d818-11eb-1ec0-0bb9fc8f83ed
+# ╟─bdf17ee0-d817-11eb-1699-43f0bf480dff
+# ╟─92bd3420-d818-11eb-1a9e-a939fbba5f12
+# ╟─77e0d7c0-d81c-11eb-0f5e-434e71546acc
+# ╟─049ae9ee-d81b-11eb-2325-bf2dced8d369
+# ╟─2f64dd50-d81e-11eb-2b5e-c3bcd8e4e6c5
+# ╟─617f767e-5ced-11eb-3177-f52621f68710
+# ╟─87936340-5ced-11eb-3a42-932fd83fe115
