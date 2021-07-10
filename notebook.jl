@@ -16,7 +16,7 @@ end
 # ╔═╡ c2ad8940-1a0a-11eb-38de-7d2feb4c0fba
 begin
 	using Pkg
-	Pkg.add(["LaTeXStrings","Plots","PlutoUI"])
+	Pkg.add(["LaTeXStrings","Plots","PlutoUI","QuadGK"])
 	using LaTeXStrings
 	using Plots
 	using PlutoUI
