@@ -24,29 +24,11 @@ begin
 	plotly()
 end;
 
-# ╔═╡ 87936340-5ced-11eb-3a42-932fd83fe115
-begin
-	using ForwardDiff
-	g(x) = x[1] + exp(x[2]-x[1])
-	z = [1,2]
-	g_hat(x) = g(z) + ForwardDiff.gradient(g,z)' * (x - z)
-	xrange = range(-0.5,2;length=20)
-	yrange = range(-1,4;length=20)
-	vals = [[x[1],x[2]] for x in zip(xrange,yrange)]
-	plot(g.(vals), label="f(x)")
-	plot!(
-		g_hat.(vals),
-		label="f_hat(x)",
-		legend=:topleft,
-		xticks=(1:length(vals), [[round(x[1], digits=2), round(x[2], digits=2)] for x in vals]),
-		xrotation=45
-	)
-	scatter!([12.4], [g_hat([1,2])], label="x = [1,2]")
-end
-
 # ╔═╡ 00becd22-19ed-11eb-1be5-a1380e1f3e51
 md"""
 # Calculus in a Nutshell
+
+*Matt Helm*
 
 #### I. Limits & Continuity
 
@@ -332,7 +314,7 @@ end
 
 # ╔═╡ 92bd3420-d818-11eb-1a9e-a939fbba5f12
 md"""
-Obviously, as we integrate over a larger interval, we see that the shaded region becomes larger and its area becomes larger. An interesting question to ask is: what is the rate of change of the increase in the area of this shaded region? In other words, what's the derivative of the function that produces the orange-dashed line? 
+The orange-dashed line in the graph above shows the y-value that corresponds to the total area of the shaded region. Obviously, as we integrate over a larger interval, we see that the shaded region becomes larger and its area becomes larger. An interesting question to ask is: what is the rate of change of the increase in the area of this shaded region? In other words, what's the derivative of the function that produces the orange-dashed line? 
 
 To answer that, let's first look at what function produces the area of the green-shaded region, for each value of $x$. We've already stated above that it's the anti-derivative of $f$. In this example, $f(x) = \sin(x)$ and one of its anti-derivatives is $F(x) = -\cos(x) + 1$. Below we'll plot $f$,$F$, a line tangent to $F$ at some $x$ value (that you control with the slider), as well as a purple dot that corresponds to the slope of the tangent line:
 """
@@ -370,11 +352,31 @@ In the above, $\nabla f(z)$ is the *gradient* of $f(z)$, which is nothing more t
 $\nabla f(z) = [1 - exp(x_{2} - x_{1}), \ exp(x_{2} - x_{1})]$
 
 For any $x$ near $z$, $\hat{f}$ is very close to $f(x)$.
-"""
+""";
+
+# ╔═╡ 87936340-5ced-11eb-3a42-932fd83fe115
+begin
+	# using ForwardDiff
+	# g(x) = x[1] + exp(x[2]-x[1])
+	# z = [1,2]
+	# g_hat(x) = g(z) + ForwardDiff.gradient(g,z)' * (x - z)
+	# xrange = range(-0.5,2;length=20)
+	# yrange = range(-1,4;length=20)
+	# vals = [[x[1],x[2]] for x in zip(xrange,yrange)]
+	# plot(g.(vals), label="f(x)")
+	# plot!(
+	# 	g_hat.(vals),
+	# 	label="f_hat(x)",
+	# 	legend=:topleft,
+	# 	xticks=(1:length(vals), [[round(x[1], digits=2), round(x[2], digits=2)] for x in vals]),
+	# 	xrotation=45
+	# )
+	# scatter!([12.4], [g_hat([1,2])], label="x = [1,2]")
+end;
 
 # ╔═╡ Cell order:
 # ╟─00becd22-19ed-11eb-1be5-a1380e1f3e51
-# ╠═c2ad8940-1a0a-11eb-38de-7d2feb4c0fba
+# ╟─c2ad8940-1a0a-11eb-38de-7d2feb4c0fba
 # ╟─41505bfe-1a0b-11eb-2f7c-592c4b5aa816
 # ╟─f737c88e-1a0c-11eb-1b2e-95d746db7001
 # ╟─3c3f4040-1a0c-11eb-24d6-47e1ede493be
